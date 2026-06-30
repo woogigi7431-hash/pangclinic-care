@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ppang Clinic - Post-Treatment Care</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --blue:#1D4ED8;--blue-light:#EFF6FF;--blue-mid:#BFDBFE;
+    --bg:#F8FAFC;--surface:#fff;--border:#E2E8F0;
+    --text:#0F172A;--muted:#64748B;--hint:#94A3B8;
+    --warn:#FEF3C7;--warn-b:#F59E0B;
+    --r:12px;--rs:8px;
+  }
+  html{scroll-behavior:smooth;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;}
+
+  .hero{background:#fff;border-bottom:1px solid var(--border);padding:36px 24px 28px;text-align:center;}
+  .hero-logo{width:72px;height:auto;margin:0 auto 16px;display:block;}
+  .hero-clinic{font-family:'Noto Serif',serif;font-size:22px;font-weight:700;letter-spacing:3px;color:var(--text);}
+  .hero-sub{font-size:12px;letter-spacing:2px;color:var(--muted);margin-top:4px;text-transform:uppercase;}
+  .hero-divider{width:40px;height:1px;background:var(--border);margin:16px auto;}
+  .hero-title{font-size:17px;font-weight:600;color:var(--text);letter-spacing:-0.2px;}
+  .hero-title-en{font-size:13px;color:var(--muted);margin-top:4px;}
+
+  .sticky-bar{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,0.05);}
+  .top-row{display:flex;align-items:center;gap:8px;padding:12px 16px;flex-wrap:wrap;justify-content:center;}
+  .lang-btn{padding:7px 14px;border:1.5px solid var(--border);background:none;border-radius:6px;font-size:13px;font-family:inherit;cursor:pointer;color:var(--muted);transition:all .15s;font-weight:500;white-space:nowrap;}
+  .lang-btn:hover{background:var(--bg);color:var(--text);}
+  .lang-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+  main{max-width:720px;margin:0 auto;padding:28px 14px 80px;}
+
+  .group-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden;transition:box-shadow .2s;}
+  .group-card:hover{box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  .group-head{padding:18px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+  .group-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0;}
+  .group-titles{flex:1;min-width:0;}
+  .group-title{font-size:15.5px;font-weight:700;color:var(--text);line-height:1.4;}
+  .group-target{font-size:11.5px;color:var(--hint);margin-top:3px;}
+  .chevron{color:var(--hint);transition:transform .25s;flex-shrink:0;}
+  .group-card.open .chevron{transform:rotate(180deg);}
+  .group-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border);}
+  .group-card.open .group-body{display:block;}
+
+  .precaution-list{list-style:none;padding:0;margin-top:16px;}
+  .precaution-list li{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--bg);font-size:13.5px;line-height:1.75;color:var(--muted);word-break:keep-all;}
+  .precaution-list li:last-child{border-bottom:none;}
+  .precaution-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:9px;}
+  .precaution-list li strong{color:var(--text);font-weight:600;}
+  .precaution-list li.crit{background:var(--warn);border-radius:var(--rs);padding:11px 13px;margin-top:2px;border-bottom:none;border-left:3px solid var(--warn-b);}
+  .precaution-list li.crit::before{background:var(--warn-b);margin-top:9px;}
+  .dtag{display:inline-block;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:600;padding:1px 7px;border-radius:4px;margin:0 2px;}
+
+  .common-card{background:linear-gradient(135deg,#FEF3C7 0%,#FFF7ED 100%);border:1px solid var(--warn-b);border-radius:var(--r);padding:20px;margin-bottom:14px;}
+  .common-card h3{font-size:15px;font-weight:700;color:#92400E;margin-bottom:4px;}
+
+  .lang-block{display:none;}
+  .lang-block.active{display:block;}
+
+  footer{text-align:center;padding:20px 16px;font-size:11px;color:var(--hint);border-top:1px solid var(--border);background:var(--surface);line-height:1.8;}
+
+  @media(max-width:480px){
+    .hero-clinic{font-size:18px;}
+    .hero-title{font-size:15px;}
+    .group-title{font-size:14px;}
+    .precaution-list li{font-size:13px;}
+    main{padding:18px 12px 80px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img class="hero-logo" src="data:image/png;base64,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" alt="Ppang Clinic Logo">
+  <div class="hero-clinic">PPANG CLINIC</div>
+  <div class="hero-sub">홍대입구 피부과의원</div>
+  <div class="hero-divider"></div>
+  <div id="heroTitle" class="hero-title">시술 후 주의사항</div>
+  <div id="heroTitleEn" class="hero-title-en">Post-Treatment Care Instructions</div>
+</div>
+
+<div class="sticky-bar">
+  <div class="top-row">
+    <button class="lang-btn active" data-lang="ko">한국어</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="zh">简体</button>
+    <button class="lang-btn" data-lang="tw">繁體</button>
+    <button class="lang-btn" data-lang="ja">日本語</button>
+  </div>
+</div>
+
+<main id="mainContent"></main>
+
+<footer>
+  &copy; 2026 PPANG CLINIC<br>
+  <span id="footerNote">본 자료는 의료 정보 제공 목적으로 작성되었으며, 실제 진료를 대체하지 않습니다.</span>
+</footer>
+
+<script>
+// ===== 전체 데이터 (언어별 완전 분리) =====
+const DATA = {
+  ko: {
+    heroTitle: "시술 후 주의사항",
+    heroTitleEn: "Post-Treatment Care Instructions",
+    footerNote: "본 자료는 의료 정보 제공 목적으로 작성되었으며, 실제 진료를 대체하지 않습니다.",
+    groups: [
+      {
+        num: 1, color: "#DC2626",
+        title: "레이저 리프팅 & 마이크로웨이브",
+        target: "대상: 하이푸(슈링크, 울쎄라) · 고주파(볼뉴머, 덴써티, 써마지) · 마이크로웨이브(온다)",
+        items: [
+          {crit:false, html:"<strong>피부 속 열감 유지 (핵심):</strong> 리프팅 레이저는 피부 깊숙이 열 손상을 주어 콜라겐 재생을 유도하는 원리입니다. 시술 후 <strong><span class='dtag'>3일간</span></strong> 미온수 세안을 해주시고, 얼음찜질이나 차가운 팩 마스크는 효과를 떨어뜨릴 수 있으니 자제해주세요."},
+          {crit:false, html:"<strong>통증 및 뻐근함:</strong> 시술 후 <strong>일주일 정도</strong>는 얼굴을 누르거나 턱을 괴어 힘을 줄 때 욱신거리거나 얼얼한 느낌, 뻐근한 통증이 있을 수 있습니다. 일시적인 신경 자극 및 재생 반응이므로 안심하셔도 됩니다."},
+          {crit:false, html:"<strong>일시적 부기와 붉은 기:</strong> 고주파나 온다 리프팅의 경우 시술 직후 다소 붓거나 붉어질 수 있으며, 대개 <strong><span class='dtag'>1~3일</span></strong> 이내에 호전됩니다."},
+          {crit:false, html:"<strong>건조함 예방:</strong> 시술 후 피부가 일시적으로 건조해지고 각질이 일어날 수 있습니다. 재생 크림과 수분 크림을 평소의 1.5배 이상 충분히 도포해주세요."},
+          {crit:false, html:"<strong>일시적인 팽진:</strong> 초음파(HIFU) 리프팅 시 피부 장벽이 얇고 예민한 부위에는 모기 물린 듯한 부어오름(팽진)이나 붉은 띠 자국이 올라올 수 있으나, 수일 내 자연스럽게 가라앉으니 안심하셔도 됩니다."}
+        ]
+      },
+      {
+        num: 2, color: "#EA580C",
+        title: "흉터 · 색소 · 모공 레이저 (피부 재생 케어)",
+        target: "대상: 포텐자, CO2 프락셀",
+        items: [
+          {crit:true, html:"<strong>미세 딱지 및 각질 관리 (절대 주의):</strong> 시술 후 <strong>2~3일째</strong>부터 피부 표면에 미세한 격자 모양이나 점 형태의 딱지가 앉기 시작합니다. 이 딱지는 피부 세포가 재생되면서 자연스럽게 탈락해야 흉터가 남지 않습니다. <strong>손으로 뜯거나, 타월로 밀거나, 스크럽제를 사용하는 행위는 절대 금물</strong>입니다. (통상 <strong>5~7일</strong> 소요)"},
+          {crit:false, html:"<strong>세안 및 화장:</strong> 시술 다음 날부터 가벼운 물세안과 메이크업이 가능하지만, 클렌징 시 피부를 강하게 문지르지 마세요."},
+          {crit:false, html:"<strong>자외선 차단 (필수):</strong> 시술 후 새살이 돋아나는 시기에는 멜라닌 세포가 예민해져 있어 햇빛에 노출되면 색소침착(PIH)이 생기기 쉽습니다. 실내외를 불문하고 <strong>SPF 50+ / PA++++ 이상</strong>의 자외선 차단제를 <strong>2~3시간 간격</strong>으로 덧발라주세요."}
+        ]
+      },
+      {
+        num: 3, color: "#2563EB",
+        title: "주사 시술 & 실리프팅 (모양 유지 및 감염 예방)",
+        target: "대상: 보톡스, 필러, 지방파괴주사(DCA 포함), 실리프팅",
+        items: [
+          {crit:true, html:"<strong>접촉 및 압박 금지 (최소 2주):</strong> 필러와 실리프팅은 시술 부위가 고정되기까지 시간이 필요합니다. 안경 착용(코필러 시), 모자 착용(이마필러 시), 경락 마사지, 옆으로 누워 자는 습관은 모양 변형이나 실의 이동을 유발할 수 있으므로 <strong>최소 2주일간</strong> 피해주세요."},
+          {crit:false, html:"<strong>지방파괴주사(DCA 등) 후 반응:</strong> 시술 부위가 단단해지거나 뭉치는 현상, 뻐근한 통증, 부기가 있을 수 있습니다. 약물이 작용하며 지방 세포가 파괴되는 정상 과정입니다. 가벼운 마사지가 도움될 수 있으나 의료진 안내에 따라 행해져야 합니다. 체내 파괴된 지방 배출을 위해 <strong>하루 2L 이상의 수분 섭취</strong>를 권장합니다."},
+          {crit:false, html:"<strong>과도한 안면 근육 사용 자제:</strong> 턱 보톡스나 실리프팅 후에는 딱딱하고 질긴 음식(오징어, 껌 등) 섭취를 피하시고, 입을 너무 크게 벌리지 않도록 주의해주세요."},
+          {crit:false, html:"<strong>멍과 부기:</strong> 주삿바늘로 인한 멍이나 부기는 <strong>1~2주</strong>에 걸쳐 서서히 아래로 내려오며 노랗게 변하다가 사라집니다."}
+        ]
+      },
+      {
+        num: 4, color: "#059669",
+        title: "스킨부스터 (수분 및 영양 공급)",
+        target: "대상: 리쥬란, 도로시, 팡스킨부스터, RE20",
+        items: [
+          {crit:false, html:"<strong>엠보싱 및 주사 자국:</strong> 피부 진피층에 약물을 직접 주입하기 때문에 시술 직후 올록볼록한 엠보싱 현상이나 미세한 바늘 자국, 멍이 동반됩니다."},
+          {crit:false, html:"<strong>리쥬란 / RE20:</strong> 약물의 점도가 높아 엠보싱이 <strong><span class='dtag'>3~5일</span></strong> 정도 지속될 수 있습니다."},
+          {crit:false, html:"<strong>도로시 / 팡스킨부스터:</strong> 비교적 빠르게 흡수되어 <strong><span class='dtag'>1~2일</span></strong> 내에 진정됩니다."},
+          {crit:false, html:"<strong>감염 예방:</strong> 주입 직후 피부에 미세한 구멍이 열려 있는 상태이므로, 시술 당일에는 오염된 손으로 얼굴을 만지지 마시고 화장품도 최소한으로 바르시는 것이 좋습니다."}
+        ]
+      }
+    ],
+    commonTitle: "⚠️ 모든 시술 공통 금기사항 (부작용 예방 필수)",
+    commonItems: [
+      "<strong>금주 및 금연 (시술 후 1주일):</strong> 알코올은 혈관을 확장시켜 부기를 악화시키고 염증을 유발합니다. 흡연은 혈관을 수축시켜 피부 재생을 방해하므로 일주일간 반드시 금해주세요.",
+      "<strong>고온 자극 피하기 (시술 후 1주일):</strong> 찜질방, 사우나, 격렬한 운동, 핫요가, 열탕 목욕 등 몸에 열을 내고 땀을 흘리는 행위는 시술 부위의 염증 가능성을 높입니다.",
+      "<strong>기능성 제품 사용 제한:</strong> 피부가 완전히 회복될 때까지 레티놀(비타민A), 비타민C, AHA/BHA 등 산성이거나 자극적인 성분이 든 화장품은 사용을 중단하고 수분/재생 라인 위주로 케어해주세요."
+    ]
+  },
+  en: {
+    heroTitle: "Post-Treatment Care",
+    heroTitleEn: "Post-Treatment Care Instructions",
+    footerNote: "This material is provided for medical information purposes and does not replace actual medical consultation.",
+    groups: [
+      {
+        num: 1, color: "#DC2626",
+        title: "Laser Lifting & Microwave",
+        target: "Treatments: HIFU (Shrink, Ulthera) &middot; RF (Volnewmer, Density, Thermage) &middot; Microwave (Onda)",
+        items: [
+          {crit:false, html:"<strong>Maintain skin heat retention (key):</strong> Lifting lasers induce collagen regeneration via deep thermal stimulation. <strong><span class='dtag'>For 3 days</span></strong> after treatment, cleanse with lukewarm water only; avoid ice packs or cold masks as they may reduce treatment effectiveness."},
+          {crit:false, html:"<strong>Pain and stiffness:</strong> For about <strong>one week</strong>, you may feel throbbing, tingling, or stiff pain when pressing your face or resting your chin. This is a temporary nerve stimulation and regeneration response &mdash; no need to worry."},
+          {crit:false, html:"<strong>Temporary swelling and redness:</strong> With RF or Onda lifting, some swelling or redness may occur right after treatment, usually improving within <strong><span class='dtag'>1&ndash;3 days</span></strong>."},
+          {crit:false, html:"<strong>Preventing dryness:</strong> Skin may become temporarily dry and flaky. Apply regenerating and moisturizing cream generously &mdash; about 1.5x your usual amount."},
+          {crit:false, html:"<strong>Temporary wheals:</strong> With HIFU lifting, thin/sensitive areas may develop mosquito-bite-like bumps or red band marks from ultrasound heat stimulation, but these subside naturally within a few days."}
+        ]
+      },
+      {
+        num: 2, color: "#EA580C",
+        title: "Scar / Pigment / Pore Laser (Skin Regeneration Care)",
+        target: "Treatments: Potenza, CO2 Fraxel",
+        items: [
+          {crit:true, html:"<strong>Micro-scab and flaking care (CRITICAL):</strong> Starting <strong>day 2&ndash;3</strong> after treatment, fine grid-pattern or dot-shaped scabs form on the skin surface. These must fall off naturally as skin cells regenerate to prevent scarring. <strong>Never pick, rub with a towel, or use exfoliating scrubs.</strong> (Typically takes <strong>5&ndash;7 days</strong>.)"},
+          {crit:false, html:"<strong>Cleansing and makeup:</strong> Light water cleansing and makeup are allowed from the day after treatment, but avoid rubbing the skin firmly while cleansing."},
+          {crit:false, html:"<strong>Sun protection (essential):</strong> During the skin regeneration period, melanocytes are sensitive and sun exposure easily causes post-inflammatory hyperpigmentation (PIH). Reapply <strong>SPF 50+ / PA++++</strong> sunscreen every <strong>2&ndash;3 hours</strong>, indoors or outdoors."}
+        ]
+      },
+      {
+        num: 3, color: "#2563EB",
+        title: "Injections & Thread Lifting (Shape Retention & Infection Prevention)",
+        target: "Treatments: Botox, Filler, Fat-Dissolving Injection (incl. DCA), Thread Lifting",
+        items: [
+          {crit:true, html:"<strong>Avoid contact and pressure (minimum 2 weeks):</strong> Fillers and thread lifts need time to settle in place. Wearing glasses (for nose filler), hats (for forehead filler), meridian massage, and sleeping on your side can cause shape distortion or thread migration &mdash; avoid these for <strong>at least 2 weeks</strong>."},
+          {crit:false, html:"<strong>Reactions after fat-dissolving injections (DCA, etc.):</strong> The treated area may become hard or lumpy, with stiff pain and swelling. This is a normal process as the medication breaks down fat cells. Light massage may help but should follow your provider's guidance. <strong>Drink at least 2L of water daily</strong> to help eliminate broken-down fat."},
+          {crit:false, html:"<strong>Avoid excessive facial muscle use:</strong> After jaw botox or thread lifting, avoid hard or chewy foods (squid, gum, etc.) and avoid opening your mouth too wide."},
+          {crit:false, html:"<strong>Bruising and swelling:</strong> Bruising or swelling from injection needles will gradually move downward over <strong>1&ndash;2 weeks</strong>, turning yellow before disappearing."}
+        ]
+      },
+      {
+        num: 4, color: "#059669",
+        title: "Skin Booster (Hydration & Nutrition)",
+        target: "Treatments: Rejuran, Dorothy, Pang Skin Booster, RE20",
+        items: [
+          {crit:false, html:"<strong>Embossing and needle marks:</strong> Since the solution is injected directly into the dermis, you'll see bumpy embossing, fine needle marks, and bruising right after treatment."},
+          {crit:false, html:"<strong>Rejuran / RE20:</strong> Due to the higher viscosity of these solutions, embossing may last about <strong><span class='dtag'>3&ndash;5 days</span></strong>."},
+          {crit:false, html:"<strong>Dorothy / Pang Skin Booster:</strong> These absorb relatively quickly and settle within <strong><span class='dtag'>1&ndash;2 days</span></strong>."},
+          {crit:false, html:"<strong>Infection prevention:</strong> Since tiny openings remain in the skin right after injection, avoid touching your face with unwashed hands and keep makeup to a minimum on the day of treatment."}
+        ]
+      }
+    ],
+    commonTitle: "&#9888;&#65039; Common Restrictions for All Treatments (Essential to Prevent Side Effects)",
+    commonItems: [
+      "<strong>No alcohol or smoking (1 week after treatment):</strong> Alcohol dilates blood vessels, worsening swelling and inflammation. Smoking constricts blood vessels and hinders skin regeneration &mdash; please avoid both for one week.",
+      "<strong>Avoid heat exposure (1 week after treatment):</strong> Jjimjilbang, sauna, intense exercise, hot yoga, and hot baths &mdash; anything that raises body heat and induces sweating &mdash; increases the risk of inflammation at the treated area.",
+      "<strong>Limit active skincare products:</strong> Until your skin fully recovers, stop using retinol (vitamin A), vitamin C, AHA/BHA, and other acidic or irritating ingredients. Focus on hydrating and regenerating skincare instead."
+    ]
+  },
+  zh: {
+    heroTitle: "治疗后注意事项",
+    heroTitleEn: "Post-Treatment Care Instructions",
+    footerNote: "本资料仅供医疗信息参考，不能替代实际诊疗。",
+    groups: [
+      {
+        num: 1, color: "#DC2626",
+        title: "激光提升 & 微波",
+        target: "适用：超声刀（舒颜萃、超声炮）&middot; 射频（Volnewmer、Density、热玛吉）&middot; 微波（温达）",
+        items: [
+          {crit:false, html:"<strong>保持皮肤内部热感（关键）：</strong>提升类激光通过深层热刺激诱导胶原蛋白再生。治疗后 <strong><span class='dtag'>3天内</span></strong> 请用温水洗脸，避免冰敷或冷膜，否则可能降低治疗效果。"},
+          {crit:false, html:"<strong>疼痛及酸胀感：</strong>治疗后 <strong>约一周</strong> 内，按压面部或托腮用力时可能感到刺痛、麻木或酸胀，这是暂时性的神经刺激及再生反应，无需担心。"},
+          {crit:false, html:"<strong>暂时性肿胀和发红：</strong>射频或温达提升治疗后可能出现轻微肿胀或发红，通常在 <strong><span class='dtag'>1~3天</span></strong> 内好转。"},
+          {crit:false, html:"<strong>预防干燥：</strong>治疗后皮肤可能暂时干燥起皮，请充分涂抹再生霜和保湿霜，用量为平时的1.5倍以上。"},
+          {crit:false, html:"<strong>暂时性风团：</strong>超声刀（HIFU）治疗时，皮肤屏障较薄敏感的部位可能因超声热能刺激出现类似蚊虫叮咬的肿起或红色条纹，但数日内会自然消退，无需担心。"}
+        ]
+      },
+      {
+        num: 2, color: "#EA580C",
+        title: "疤痕·色素·毛孔激光（皮肤再生护理）",
+        target: "适用：Potenza、CO2点阵",
+        items: [
+          {crit:true, html:"<strong>微小结痂及脱屑护理（绝对注意）：</strong>治疗后 <strong>第2~3天</strong> 起，皮肤表面会开始出现细微的网格状或点状结痂。这些结痂必须随皮肤细胞再生自然脱落，才不会留疤。<strong>绝对禁止用手撕扯、毛巾摩擦或使用磨砂产品。</strong>（通常需要 <strong>5~7天</strong>）"},
+          {crit:false, html:"<strong>洗脸及化妆：</strong>治疗次日起可进行轻柔的清水洗脸和化妆，但清洁时请勿用力摩擦皮肤。"},
+          {crit:false, html:"<strong>防晒（必须）：</strong>治疗后新生皮肤期间黑色素细胞较为敏感，暴露于阳光下容易产生色素沉着（PIH）。无论室内外，请每隔 <strong>2~3小时</strong> 补涂 <strong>SPF50+ / PA++++ 以上</strong> 的防晒霜。"}
+        ]
+      },
+      {
+        num: 3, color: "#2563EB",
+        title: "注射类施术 & 埋线提升（维持形状及预防感染）",
+        target: "适用：肉毒素、填充剂、溶脂针（含DCA）、埋线提升",
+        items: [
+          {crit:true, html:"<strong>禁止接触及按压（至少2周）：</strong>填充剂和埋线提升需要时间使治疗部位固定。配戴眼镜（鼻部填充时）、戴帽子（额头填充时）、经络按摩、侧睡习惯可能导致形状变形或线材移位，请 <strong>至少2周内</strong> 避免上述行为。"},
+          {crit:false, html:"<strong>溶脂针（DCA等）后反应：</strong>治疗部位可能出现硬化或结块、酸痛及肿胀。这是药物作用使脂肪细胞分解的正常过程。轻柔按摩有助于缓解，但须遵循医护人员指导进行。为帮助排出体内分解的脂肪，建议 <strong>每日饮水2L以上</strong>。"},
+          {crit:false, html:"<strong>避免过度使用面部肌肉：</strong>下颌肉毒素或埋线提升后，请避免食用坚硬或耐嚼的食物（鱿鱼、口香糖等），并注意不要过度张大嘴巴。"},
+          {crit:false, html:"<strong>瘀青及肿胀：</strong>因针刺产生的瘀青或肿胀会在 <strong>1~2周</strong> 内逐渐向下移动，变黄后消退。"}
+        ]
+      },
+      {
+        num: 4, color: "#059669",
+        title: "水光针（补水及营养供给）",
+        target: "适用：丽珠兰、多洛西、芳琳水光、RE20",
+        items: [
+          {crit:false, html:"<strong>凹凸感及针孔痕迹：</strong>由于药液直接注入真皮层，治疗后会立即出现凹凸不平的隆起感、细小针孔及瘀青。"},
+          {crit:false, html:"<strong>丽珠兰 / RE20：</strong>由于药液粘稠度较高，凹凸感可能持续约 <strong><span class='dtag'>3~5天</span></strong>。"},
+          {crit:false, html:"<strong>多洛西 / 芳琳水光：</strong>吸收较快，通常 <strong><span class='dtag'>1~2天</span></strong> 内即可消退。"},
+          {crit:false, html:"<strong>预防感染：</strong>注射后皮肤上有微小开口，治疗当天请勿用未清洁的手触摸面部，并尽量减少化妆品的使用。"}
+        ]
+      }
+    ],
+    commonTitle: "&#9888;&#65039; 所有治疗通用禁忌事项（预防副作用必读）",
+    commonItems: [
+      "<strong>禁酒禁烟（治疗后1周）：</strong>酒精会使血管扩张，加重肿胀并引发炎症。吸烟会使血管收缩，妨碍皮肤再生，请务必戒酒戒烟一周。",
+      "<strong>避免高温刺激（治疗后1周）：</strong>汗蒸房、桑拿、剧烈运动、热瑜伽、泡热水澡等会使身体发热出汗的行为，会增加治疗部位发炎的风险。",
+      "<strong>限制使用功能性产品：</strong>在皮肤完全恢复前，请停止使用视黄醇（维生素A）、维生素C、AHA/BHA等酸性或刺激性成分的化妆品，应以补水/再生系列产品为主进行护理。"
+    ]
+  },
+  tw: {
+    heroTitle: "治療後注意事項",
+    heroTitleEn: "Post-Treatment Care Instructions",
+    footerNote: "本資料僅供醫療資訊參考，不能替代實際診療。",
+    groups: [
+      {
+        num: 1, color: "#DC2626",
+        title: "雷射拉提 & 微波",
+        target: "適用：超音波刀（舒顏萃、超聲炮）&middot; 射頻（Volnewmer、Density、熱瑪吉）&middot; 微波（溫達）",
+        items: [
+          {crit:false, html:"<strong>保持皮膚內部熱感（關鍵）：</strong>提升類雷射透過深層熱刺激誘導膠原蛋白再生。治療後 <strong><span class='dtag'>3天內</span></strong> 請用溫水洗臉，避免冰敷或冷膜，否則可能降低治療效果。"},
+          {crit:false, html:"<strong>疼痛及痠脹感：</strong>治療後 <strong>約一週</strong> 內，按壓臉部或托腮用力時可能感到刺痛、麻木或痠脹，這是暫時性的神經刺激及再生反應，無需擔心。"},
+          {crit:false, html:"<strong>暫時性腫脹和發紅：</strong>射頻或溫達提升治療後可能出現輕微腫脹或發紅，通常在 <strong><span class='dtag'>1~3天</span></strong> 內好轉。"},
+          {crit:false, html:"<strong>預防乾燥：</strong>治療後皮膚可能暫時乾燥脫屑，請充分塗抹再生霜和保濕霜，用量為平時的1.5倍以上。"},
+          {crit:false, html:"<strong>暫時性風團：</strong>超音波刀（HIFU）治療時，皮膚屏障較薄敏感的部位可能因超音波熱能刺激出現類似蚊蟲叮咬的腫起或紅色條紋，但數日內會自然消退，無需擔心。"}
+        ]
+      },
+      {
+        num: 2, color: "#EA580C",
+        title: "疤痕·色素·毛孔雷射（皮膚再生護理）",
+        target: "適用：Potenza、CO2點陣",
+        items: [
+          {crit:true, html:"<strong>微小結痂及脫屑護理（絕對注意）：</strong>治療後 <strong>第2~3天</strong> 起，皮膚表面會開始出現細微的網格狀或點狀結痂。這些結痂必須隨皮膚細胞再生自然脫落，才不會留疤。<strong>絕對禁止用手撕扯、毛巾摩擦或使用磨砂產品。</strong>（通常需要 <strong>5~7天</strong>）"},
+          {crit:false, html:"<strong>洗臉及化妝：</strong>治療隔天起可進行輕柔的清水洗臉和化妝，但清潔時請勿用力摩擦皮膚。"},
+          {crit:false, html:"<strong>防曬（必須）：</strong>治療後新生皮膚期間黑色素細胞較為敏感，暴露於陽光下容易產生色素沉著（PIH）。無論室內外，請每隔 <strong>2~3小時</strong> 補塗 <strong>SPF50+ / PA++++ 以上</strong> 的防曬乳。"}
+        ]
+      },
+      {
+        num: 3, color: "#2563EB",
+        title: "注射類施術 & 埋線拉提（維持形狀及預防感染）",
+        target: "適用：肉毒桿菌、填充劑、溶脂針（含DCA）、埋線拉提",
+        items: [
+          {crit:true, html:"<strong>禁止接觸及按壓（至少2週）：</strong>填充劑和埋線拉提需要時間使治療部位固定。配戴眼鏡（鼻部填充時）、戴帽子（額頭填充時）、經絡按摩、側睡習慣可能導致形狀變形或線材移位，請 <strong>至少2週內</strong> 避免上述行為。"},
+          {crit:false, html:"<strong>溶脂針（DCA等）後反應：</strong>施術部位可能出現硬化或結塊、痠痛及腫脹。這是藥物作用使脂肪細胞分解的正常過程。輕柔按摩有助於緩解，但須遵循醫護人員指導進行。為幫助排出體內分解的脂肪，建議 <strong>每日飲水2L以上</strong>。"},
+          {crit:false, html:"<strong>避免過度使用臉部肌肉：</strong>下顎肉毒素或埋線拉提後，請避免食用堅硬或耐嚼的食物（魷魚、口香糖等），並注意不要過度張大嘴巴。"},
+          {crit:false, html:"<strong>瘀青及腫脹：</strong>因針刺產生的瘀青或腫脹會在 <strong>1~2週</strong> 內逐漸向下移動，變黃後消退。"}
+        ]
+      },
+      {
+        num: 4, color: "#059669",
+        title: "水光針（補水及營養供給）",
+        target: "適用：麗珠蘭、多洛西、芳琳水光、RE20",
+        items: [
+          {crit:false, html:"<strong>凹凸感及針孔痕跡：</strong>由於藥液直接注入真皮層，治療後會立即出現凹凸不平的隆起感、細小針孔及瘀青。"},
+          {crit:false, html:"<strong>麗珠蘭 / RE20：</strong>由於藥液黏稠度較高，凹凸感可能持續約 <strong><span class='dtag'>3~5天</span></strong>。"},
+          {crit:false, html:"<strong>多洛西 / 芳琳水光：</strong>吸收較快，通常 <strong><span class='dtag'>1~2天</span></strong> 內即可消退。"},
+          {crit:false, html:"<strong>預防感染：</strong>注射後皮膚上有微小開口，治療當天請勿用未清潔的手觸摸臉部，並盡量減少化妝品的使用。"}
+        ]
+      }
+    ],
+    commonTitle: "&#9888;&#65039; 所有施術通用禁忌事項（預防副作用必讀）",
+    commonItems: [
+      "<strong>禁酒禁菸（施術後1週）：</strong>酒精會使血管擴張，加重腫脹並引發發炎。吸菸會使血管收縮，妨礙皮膚再生，請務必戒酒戒菸一週。",
+      "<strong>避免高溫刺激（施術後1週）：</strong>汗蒸房、三溫暖、激烈運動、熱瑜伽、泡熱水澡等會使身體發熱出汗的行為，會增加施術部位發炎的風險。",
+      "<strong>限制使用功能性產品：</strong>在皮膚完全恢復前，請停止使用視黃醇（維生素A）、維生素C、AHA/BHA等酸性或刺激性成分的化妝品，應以補水/再生系列產品為主進行護理。"
+    ]
+  },
+  ja: {
+    heroTitle: "施術後の注意事項",
+    heroTitleEn: "Post-Treatment Care Instructions",
+    footerNote: "本資料は医療情報提供を目的としたものであり、実際の診療に代わるものではありません。",
+    groups: [
+      {
+        num: 1, color: "#DC2626",
+        title: "レーザーリフティング & マイクロウェーブ",
+        target: "対象：HIFU（シュリンク、ウルセラ）&middot; 高周波（Volnewmer、Density、サーマジ）&middot; マイクロウェーブ（オンダ）",
+        items: [
+          {crit:false, html:"<strong>肌内部の熱感維持（重要）：</strong>リフティングレーザーは肌の深部に熱刺激を与え、コラーゲン再生を促す施術です。施術後 <strong><span class='dtag'>3日間</span></strong> はぬるま湯で洗顔し、アイスパックや冷たいパックマスクは効果を下げる恐れがあるためお控えください。"},
+          {crit:false, html:"<strong>痛みやだるさ：</strong>施術後 <strong>約1週間</strong> は、顔を押したり頬杖をついたりすると、ズキズキ、ピリピリ、だるい痛みを感じることがあります。一時的な神経刺激と再生反応ですのでご安心ください。"},
+          {crit:false, html:"<strong>一時的な腫れと赤み：</strong>高周波やオンダリフティングの場合、施術直後にやや腫れたり赤くなることがありますが、通常 <strong><span class='dtag'>1~3日</span></strong> 以内に改善します。"},
+          {crit:false, html:"<strong>乾燥予防：</strong>施術後、肌が一時的に乾燥し角質が浮くことがあります。再生クリームと保湿クリームを普段の1.5倍以上たっぷり塗ってください。"},
+          {crit:false, html:"<strong>一時的な膨疹：</strong>超音波（HIFU）リフティング時、皮膚バリアが薄く敏感な部位には蚊に刺されたような膨らみや赤い帯状の跡が現れることがありますが、数日以内に自然に治まりますのでご安心ください。"}
+        ]
+      },
+      {
+        num: 2, color: "#EA580C",
+        title: "傷跡·色素·毛穴レーザー（肌再生ケア）",
+        target: "対象：Potenza、CO2フラクセル",
+        items: [
+          {crit:true, html:"<strong>微細なかさぶた・角質ケア（絶対注意）：</strong>施術後 <strong>2~3日目</strong> から肌表面に細かい格子状や点状のかさぶたができ始めます。このかさぶたは肌細胞が再生しながら自然に剥がれ落ちることで、傷跡が残らなくなります。<strong>手で剥がしたり、タオルでこすったり、スクラブ剤を使用するのは絶対に禁止</strong>です。（通常 <strong>5~7日</strong> 程度かかります）"},
+          {crit:false, html:"<strong>洗顔とメイク：</strong>施術翌日から軽い水洗顔とメイクが可能ですが、クレンジング時に肌を強くこすらないでください。"},
+          {crit:false, html:"<strong>紫外線対策（必須）：</strong>施術後、新しい肌が再生する時期はメラニン細胞が敏感になっており、日光に当たると色素沈着（PIH）が起きやすくなります。屋内外を問わず <strong>SPF50+ / PA++++ 以上</strong> の日焼け止めを <strong>2~3時間おき</strong> に塗り直してください。"}
+        ]
+      },
+      {
+        num: 3, color: "#2563EB",
+        title: "注射施術 & スレッドリフト（形状維持と感染予防）",
+        target: "対象：ボトックス、フィラー、脂肪溶解注射（DCA含む）、スレッドリフト",
+        items: [
+          {crit:true, html:"<strong>接触・圧迫の禁止（最低2週間）：</strong>フィラーとスレッドリフトは施術部位が定着するまで時間が必要です。メガネ着用（鼻フィラー時）、帽子着用（おでこフィラー時）、経絡マッサージ、横向き寝の習慣は形の変形や糸の移動を引き起こす可能性があるため、<strong>最低2週間</strong> はお控えください。"},
+          {crit:false, html:"<strong>脂肪溶解注射（DCA等）後の反応：</strong>施術部位が硬くなったり、しこりができたり、だるい痛みや腫れが出ることがあります。薬剤が作用し脂肪細胞が破壊される正常な過程です。軽いマッサージが役立つ場合もありますが、医療スタッフの指示に従ってください。体内で分解された脂肪の排出を助けるため、<strong>1日2L以上の水分摂取</strong> をお勧めします。"},
+          {crit:false, html:"<strong>顔の筋肉の使いすぎに注意：</strong>あごボトックスやスレッドリフト後は、硬くて噛みごたえのある食べ物（イカ、ガムなど）を避け、口を大きく開けすぎないよう注意してください。"},
+          {crit:false, html:"<strong>内出血と腫れ：</strong>注射針による内出血や腫れは <strong>1~2週間</strong> かけて徐々に下に移動し、黄色く変化してから消えていきます。"}
+        ]
+      },
+      {
+        num: 4, color: "#059669",
+        title: "スキンブースター（水分・栄養補給）",
+        target: "対象：リジュラン、ドロシー、パングスキンブースター、RE20",
+        items: [
+          {crit:false, html:"<strong>エンボス感と注射痕：</strong>薬剤を真皮層に直接注入するため、施術直後にでこぼことしたエンボス現象や細かい針痕、内出血を伴います。"},
+          {crit:false, html:"<strong>リジュラン / RE20：</strong>薬剤の粘度が高いため、エンボス感が <strong><span class='dtag'>3~5日</span></strong> ほど続くことがあります。"},
+          {crit:false, html:"<strong>ドロシー / パングスキンブースター：</strong>比較的早く吸収され、<strong><span class='dtag'>1~2日</span></strong> 以内に落ち着きます。"},
+          {crit:false, html:"<strong>感染予防：</strong>注入直後は肌に微細な穴が開いた状態のため、施術当日は不潔な手で顔を触らず、メイクも最小限にすることをお勧めします。"}
+        ]
+      }
+    ],
+    commonTitle: "&#9888;&#65039; すべての施術共通の禁忌事項（副作用予防のため必須）",
+    commonItems: [
+      "<strong>禁酒・禁煙（施術後1週間）：</strong>アルコールは血管を拡張させ、腫れを悪化させ炎症を引き起こします。喫煙は血管を収縮させ肌の再生を妨げるため、1週間は必ずお控えください。",
+      "<strong>高温刺激を避ける（施術後1週間）：</strong>チムジルバン、サウナ、激しい運動、ホットヨガ、熱いお風呂など、体に熱を発生させ汗をかく行為は、施術部位の炎症リスクを高めます。",
+      "<strong>機能性製品の使用制限：</strong>肌が完全に回復するまで、レチノール（ビタミンA）、ビタミンC、AHA/BHAなど酸性または刺激の強い成分を含む化粧品の使用を中止し、保湿・再生ケア中心でお手入れしてください。"
+    ]
+  }
+};
+
+let currentLang = 'ko';
+
+function render(lang) {
+  const d = DATA[lang];
+  document.getElementById('heroTitle').textContent = d.heroTitle;
+  document.getElementById('heroTitleEn').textContent = d.heroTitleEn;
+  document.getElementById('footerNote').textContent = d.footerNote;
+
+  let html = '';
+  d.groups.forEach((g, idx) => {
+    let itemsHtml = '';
+    g.items.forEach(item => {
+      itemsHtml += '<li class="' + (item.crit ? 'crit' : '') + '">' + item.html + '</li>';
+    });
+    html += '<div class="group-card' + (idx === 0 ? ' open' : '') + '">' +
+      '<div class="group-head" onclick="toggleGroup(this)">' +
+        '<div class="group-num" style="background:' + g.color + '">' + g.num + '</div>' +
+        '<div class="group-titles">' +
+          '<div class="group-title">' + g.title + '</div>' +
+          '<div class="group-target">' + g.target + '</div>' +
+        '</div>' +
+        '<svg class="chevron" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>' +
+      '</div>' +
+      '<div class="group-body"><ul class="precaution-list">' + itemsHtml + '</ul></div>' +
+    '</div>';
+  });
+
+  let commonHtml = '<li>' + d.commonItems.join('</li><li>') + '</li>';
+  html += '<div class="common-card">' +
+    '<h3>' + d.commonTitle + '</h3>' +
+    '<ul class="precaution-list" style="margin-top:12px;">' + commonHtml + '</ul>' +
+  '</div>';
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function toggleGroup(header) {
+  header.closest('.group-card').classList.toggle('open');
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentLang = btn.dataset.lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render(currentLang);
+  });
+});
+
+render('ko');
+</script>
+</body>
+</html>
